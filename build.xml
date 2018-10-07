@@ -1,0 +1,67 @@
+<project name="Sample usage of Salesforce Ant tasks" default="test" basedir="." xmlns:sf="antlib:com.salesforce">
+
+    <property file="build.properties"/>
+    <property environment="env"/>
+    <property name="export.folder" value="src"/>
+
+    <!-- Setting default value for username, password and session id properties to empty string
+         so unset values are treated as empty. Without this, ant expressions such as ${sf.username}
+         will be treated literally.
+    -->
+    <condition property="sf.sessionId" value=""> <not> <isset property="sf.sessionId"/> </not> </condition>
+    <condition property="sf.usernameDEV" value=""> <not> <isset property="sf.usernameDEV"/> </not> </condition>
+    <condition property="sf.passwordDEV" value=""> <not> <isset property="sf.passwordDEV"/> </not> </condition>
+
+    <condition property="aa.username" value=""> <not> <isset property="aa.username"/> </not> </condition>
+    <condition property="aa.password" value=""> <not> <isset property="aa.password"/> </not> </condition>
+
+    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+        <classpath>
+            <pathelement location="../../basedev/ant.salesforce-40.0.0.jar" />
+        </classpath>
+    </taskdef>
+
+    <path id="globalpath">
+      <fileset dir="../../../libraries">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+
+    <!-- Shows check only; never actually saves to the server -->
+    <target name="deployTest">
+      <sf:deploy username="${sf.usernamePROD}" password="${sf.passwordPROD}" sessionId="${sf.sessionId}" serverurl="${sf.serverurlPROD}" maxPoll="${sf.maxPoll}" deployRoot="src" checkOnly="true" testLevel="RunSpecifiedTests">
+        <runTest>MassReassignOpptyTest</runTest>
+       </sf:deploy>        
+    </target>
+
+    <target name="deploy">
+      <!-- Upload the contents of the "codepkg" directory, running the tests for just 1 class -->
+      <sf:deploy username="${sf.usernamePROD}" password="${sf.passwordPROD}"
+        sessionId="${sf.sessionId}" serverurl="${sf.serverurlPROD}" maxPoll="${sf.maxPoll}"
+        deployRoot="src" rollbackOnError="true" testLevel="RunSpecifiedTests">
+        <runTest>MassReassignOpptyTest</runTest>
+      </sf:deploy>
+    </target>
+
+
+    <!-- AIDEV retrieve verbs for package -->
+    <target name="pullDEV">
+      <!-- Retrieve the contents into another directory -->
+      <sf:retrieve username="${sf.usernameDEV}" password="${sf.passwordDEV}" sessionId="${sf.sessionId}" serverurl="${sf.serverurlTEST}" maxPoll="${sf.maxPoll}" retrieveTarget="src" unpackaged="src/package.xml"/>
+    </target>
+
+    <target name="pullDEVSET">    
+      <mkdir dir="src" />
+      <sf:retrieve username="${sf.usernameDEV}" password="${sf.passwordDEV}" serverurl="${sf.serverurlTEST}" maxPoll="${sf.maxPoll}" retrieveTarget="src" packageNames="W-3510" />
+    </target> 
+
+    <target name="pushDEV">
+      <!-- Upload the contents of the "codepkg" directory, running the tests for just 1 class -->
+      <sf:deploy username="${sf.usernameDEV}" password="${sf.passwordDEV}"
+        sessionId="${sf.sessionId}" serverurl="${sf.serverurlTEST}" maxPoll="${sf.maxPoll}"
+        deployRoot="src" rollbackOnError="true">
+      </sf:deploy>
+    </target>
+
+
+</project>
