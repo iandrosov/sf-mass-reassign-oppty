@@ -10,28 +10,11 @@
 private class MassReassignOpptyTest {
 
 	@testSetup static void setup() {
-        User TestMgrUsr;
-        RecordType rtInst = [Select Id From RecordType Where sObjectType ='Account' and Name='Institution' limit 1];
-        Account accInst = new Account(Name='UnivTest', RecordTypeId = rtInst.Id, Status__c='Active', Type='University Client', University_Domain__c='NA');
-        insert accInst;   
-         
-        RecordType CorpAccType = [Select Id From RecordType Where sObjectType ='Account' and Name='Corporate Account' limit 1];
-        Account KeyAcc = new Account(Name='Corp Acc', RecordTypeId = CorpAccType.Id, Key_Account__c=true, Email_Domain__c='corp');
-        insert KeyAcc;      
+        Date cdt = Date.today();
+        cdt.addDays(5);
+        Opportunity opp = new Opportunity(Name='Test Oppty', StageName='Prospecting',CloseDate=cdt);
         
-        
-        System.runAs(new User(Id=UserInfo.getUserId()))
-        {  
-            TestMgrUsr = BISKTestDataFactory.createSysAdminUser();
-        }        
-        
-        Account accStudent = TestAccountFactory.createDefaultStudentAccount();
-        insert accStudent;
-        
-        Opportunity opp = TestOpptyFactory.createDegreeProspectOppty(accStudent, accInst, prg);
-        opp.OwnerId = TestMgrUsr.Id;
-        
-		insert opp;
+		insert opp;        
     }
     static testMethod void OpptyObjectTest(){
         MassReassignOppty.OpptyObject obj = new MassReassignOppty.OpptyObject();
