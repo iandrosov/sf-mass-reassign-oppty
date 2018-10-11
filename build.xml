@@ -11,7 +11,6 @@
     <condition property="sf.sessionId" value=""> <not> <isset property="sf.sessionId"/> </not> </condition>
     <condition property="sf.usernameDEV" value=""> <not> <isset property="sf.usernameDEV"/> </not> </condition>
     <condition property="sf.passwordDEV" value=""> <not> <isset property="sf.passwordDEV"/> </not> </condition>
-
     <condition property="aa.username" value=""> <not> <isset property="aa.username"/> </not> </condition>
     <condition property="aa.password" value=""> <not> <isset property="aa.password"/> </not> </condition>
 
@@ -62,6 +61,5 @@
         deployRoot="src" rollbackOnError="true">
       </sf:deploy>
     </target>
-
 
 </project>
